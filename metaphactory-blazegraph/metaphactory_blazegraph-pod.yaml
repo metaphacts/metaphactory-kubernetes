@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    run: metaphactory-blazegraph
+  name: metaphactory-blazegraph
+spec:
+  containers:
+  - env:
+    - name: JAVA_OPTS
+      value: -Xmx1g
+    image: metaphacts/blazegraph-basic:2.2.0-20160908.003514-6
+    name: metaphactory-blazegraph
+    resources: {}
+    volumeMounts:
+    - mountPath: /blazegraph-data
+      name: metaphactory-blazegraph-data
+    ports:
+    - containerPort: 8080
+      protocol: TCP
+  imagePullSecrets:
+  - name: regcred
+  restartPolicy: OnFailure
+  volumes:
+  - name: metaphactory-blazegraph-data
+    persistentVolumeClaim:
+      claimName: metaphactory-blazegraph-data

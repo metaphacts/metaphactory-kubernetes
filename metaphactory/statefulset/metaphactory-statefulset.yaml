@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: metaphactory
+  labels:
+    app: metaphactory
+spec:
+  serviceName: "metaphactory"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: metaphactory
+  template:
+    metadata:
+      labels:
+        app: metaphactory
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - env:
+        - name: JAVA_OPTS
+          value: -Xmx1g
+        - name: BLAZEGRAPH_ENDPOINT
+          value: -Dconfig.environment.sparqlEndpoint=http://$(METAPHACTORY_BLAZEGRAPH_SERVICE_HOST):$(METAPHACTORY_BLAZEGRAPH_SERVICE_PORT)/blazegraph/sparql
+        - name: PLATFORM_OPTS
+          value: -Dlog4j.configurationFile=file:///var/lib/jetty/webapps/etc/log4j2.xml $(BLAZEGRAPH_ENDPOINT)
+        image: metaphacts/metaphactory:3.0.0
+        name: metaphactory
+        resources: {}
+        volumeMounts:
+        - mountPath: /runtime-data
+          name: metaphactory-runtime-data
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+      initContainers:
+      - image: metaphacts/metaphactory:3.0.0
+        name: metaphactory-config-init
+        command: ["cp","-r","/runtime-data/.","/runtime-target/"]
+        volumeMounts:
+        - mountPath: /runtime-target
+          name: metaphactory-runtime-data
+      imagePullSecrets:
+      - name: regcred
+  volumeClaimTemplates:
+  - metadata:
+      name: metaphactory-runtime-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+ #     storageClassName: "my-storage-class"
+      resources:
+        requests:
+          storage: 100Mi
