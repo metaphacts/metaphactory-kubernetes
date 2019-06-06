@@ -27,15 +27,16 @@ To create a new deployment from scratch chose from these two options:
 2. Change into the `/metaphactory-kubernetes` folder 
 3. Ensure that the correct name for the secret name is set in `/metaphactory/pod/metaphactory-pod.yaml`for `imagePullSecrets: - name: `
 4. Remove `#` characters in `/metaphactory/pod/metaphactory-pod.yaml` for `- name: BLAZEGRAPH_ENDPOINT`, `value: -Dconfig.environment.sparqlEndpoint=http:// ...` and `$(BLAZEGRAPH_ENDPOINT)`
-5. Ensure that the intended storage class is set in `/metaphactory/pod/metaphactory_runtime_data-persistentvolumeclaim.yaml` and `/metaphactory-blazegraph/metaphactory_blazegraph_data-persistentvolumeclaim` for `storageClassName: `. The setting is commented out in the provided configuration, which will default to the `default` storage class
+5. Ensure that the intended storage class is set in `/metaphactory/pod/metaphactory_runtime_data-persistentvolumeclaim.yaml` and `/metaphactory-blazegraph/metaphactory_blazegraph_data-persistentvolumeclaim.yaml` for `storageClassName: `. The setting is commented out in the provided configuration, which will default to the `default` storage class
 6. The configuration assumes the usage of a loadbalancer.  Please change `type: LoadBalancer` to `type: NodePort` in `/metaphactory/metaphactory-service.yaml`, if you do not want to use a loadbalancer.
-6. First start the blazegraph pod and service with `kubectl apply -f ./metaphactory-blazegraph` (on Windows run `kubectl apply -f .\metaphactory-blazegraph`)
-7. Verify that the pod is up and running with `kubectl get pod metaphactory-blazegraph` where `READY` should be `1/1` and `STATUS` shows as `Running`
-8. Next start the metaphacrory service with `kubectl apply -f ./metaphactory` (on Windows run `kubectl apply -f .\metaphactory`)
-9. Verify that the service for `metaphactory` and `metaphactory-blazegraph` is up and running with `kubectl get services`. `metaphactory` service should show an external IP, please note down this IP or hostname
-10. Finally start the metaphactory pod and persistent volume claim with `kubectl apply -f ./metaphactory/pod` (on Windows run `kubectl apply -f .\metaphactory\pod`)
-11. Verify that the service is running by connecting to `http://<external IP>` with the external IP as retrieved during step 9. 
-12. Login with credentials `admin` and password `admin`
+7. The blazegraph image is configured with a 100MB (100Mi) volume, which should be sufficient for 1M triples. Please increase the size of the volume in `/metaphactory-blazegraph/metaphactory_blazegraph_data-persistentvolumeclaim.yaml` if you plan to store more than 1M triples.
+8. First start the blazegraph pod and service with `kubectl apply -f ./metaphactory-blazegraph` (on Windows run `kubectl apply -f .\metaphactory-blazegraph`)
+9. Verify that the pod is up and running with `kubectl get pod metaphactory-blazegraph` where `READY` should be `1/1` and `STATUS` shows as `Running`
+10. Next start the metaphacrory service with `kubectl apply -f ./metaphactory` (on Windows run `kubectl apply -f .\metaphactory`)
+11. Verify that the service for `metaphactory` and `metaphactory-blazegraph` is up and running with `kubectl get services`. `metaphactory` service should show an external IP, please note down this IP or hostname
+12. Finally start the metaphactory pod and persistent volume claim with `kubectl apply -f ./metaphactory/pod` (on Windows run `kubectl apply -f .\metaphactory\pod`)
+13. Verify that the service is running by connecting to `http://<external IP>` with the external IP as retrieved during step 11. 
+14. Login with credentials `admin` and password `admin`
 
 To remove the complete setup run following commands (**Note: This will remove all persistent volumes and data as well**)
 1. Ensure you are in the folder for `/metaphactory-kubernets`
