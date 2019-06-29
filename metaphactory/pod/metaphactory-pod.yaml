@@ -11,8 +11,14 @@ spec:
       value: -Xmx1g
 #    - name: BLAZEGRAPH_ENDPOINT
 #      value: -Dconfig.environment.sparqlEndpoint=http://$(METAPHACTORY_BLAZEGRAPH_SERVICE_HOST):$(METAPHACTORY_BLAZEGRAPH_SERVICE_PORT)/blazegraph/sparql
+    - name: EXTRA_ENV
+      valueFrom:
+        configMapKeyRef:
+          name: metaphactory
+          key: extra_env
+          optional: true
     - name: PLATFORM_OPTS
-      value: -Dlog4j.configurationFile=file:///var/lib/jetty/webapps/etc/log4j2.xml #$(BLAZEGRAPH_ENDPOINT)
+      value: -Dlog4j.configurationFile=file:///var/lib/jetty/webapps/etc/log4j2.xml #$(BLAZEGRAPH_ENDPOINT) #$(EXTRA_ENV) 
     image: metaphacts/metaphactory:3.0.0
     name: metaphactory
     resources: {}
