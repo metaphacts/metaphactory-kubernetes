@@ -19,7 +19,7 @@ spec:
           optional: true
     - name: PLATFORM_OPTS
       value: -Dlog4j.configurationFile=file:///var/lib/jetty/webapps/etc/log4j2.xml #$(BLAZEGRAPH_ENDPOINT) #$(EXTRA_ENV) 
-    image: metaphacts/metaphactory:3.3.0.1
+    image: metaphacts/metaphactory:3.4.0
     name: metaphactory
     resources: {}
     volumeMounts:
@@ -29,7 +29,7 @@ spec:
     - containerPort: 8080
       protocol: TCP
   initContainers:
-  - image: metaphacts/metaphactory:3.3.0.1
+  - image: metaphacts/metaphactory:3.4.0
     name: metaphactory-config-init
     command: ["cp","-r","/runtime-data/.","/runtime-target/"]
     volumeMounts:
