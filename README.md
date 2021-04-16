@@ -23,7 +23,8 @@ To create a new deployment from scratch chose from these two options:
 #### Metaphactory with blazegraph triplestore included (recommended for initial tests)
 
 1. Clone this GIT repository with `git clone https://github.com/metaphacts/metaphactory-kubernetes.git`
-2. Create a secret in your cluster to pull images from a private registry (this has to be for the docker hub account enlisted with the metaphact's docker hub repository) and note down the name of that secret (default name assumed in provided configuration files is `regcred`)
+2. Create a secret in your cluster to pull images from a private registry and note down the name of that secret (default name assumed in provided configuration files is `regcred`): 
+  `kubectl create secret docker-registry regcred --docker-username=metaphactscustomers --docker-password=<your-token-from-registration>`
 2. Change into the `/metaphactory-kubernetes` folder 
 3. Ensure that the correct name for the secret name is set in `/metaphactory/pod/metaphactory-pod.yaml`for `imagePullSecrets: - name: `
 4. Remove `#` characters in `/metaphactory/pod/metaphactory-pod.yaml` for `- name: BLAZEGRAPH_ENDPOINT`, `value: -Dconfig.environment.sparqlEndpoint=http:// ...` and `$(BLAZEGRAPH_ENDPOINT)`
@@ -48,7 +49,8 @@ To remove the complete setup run following commands (**Note: This will remove al
 #### Metaphactory for use with existing triplestores
 
 1. Clone this GIT repository with `git clone https://github.com/metaphacts/metaphactory-kubernetes.git`
-2. Create a secret in your cluster to pull images from a private registry (this has to be for the docker hub account enlisted with the metaphact's docker hub repository) and note down the name of that secret (default name assumed in provided configuration files is `regcred`)
+2. Create a secret in your cluster to pull images from a private registry and note down the name of that secret (default name assumed in provided configuration files is `regcred`): 
+  `kubectl create secret docker-registry regcred --docker-username=metaphactscustomers --docker-password=<your-token-from-registration>`
 2. Change into the `/metaphactory-kubernetes` folder 
 3. Ensure that the correct name for the secret name is set in `/metaphactory/pod/metaphactory-pod.yaml` for `imagePullSecrets: - name: `
 4. Ensure that the intended storage class is set in `/metaphactory/pod/metaphactory_runtime_data-persistentvolumeclaim.yaml` for `storageClassName: `. The setting is commented out in the provided configuration, which will default to the `default` storage class
