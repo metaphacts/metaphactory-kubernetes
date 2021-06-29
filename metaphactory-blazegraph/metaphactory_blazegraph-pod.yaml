@@ -9,7 +9,7 @@ spec:
   - env:
     - name: JAVA_OPTS
       value: -Xmx1g
-    image: metaphacts/blazegraph-basic:2.2.0-20160908.003514-6-jetty9.4.35-jre8-a53ba9b
+    image: metaphacts/blazegraph-basic:2.2.0-20160908.003514-6-jetty9.4.41-jre8-bbc2f4a
     name: metaphactory-blazegraph
     resources: {}
     volumeMounts:
