@@ -24,17 +24,21 @@ spec:
           value: -Dconfig.environment.sparqlEndpoint=http://$(METAPHACTORY_BLAZEGRAPH_SERVICE_HOST):$(METAPHACTORY_BLAZEGRAPH_SERVICE_PORT)/blazegraph/sparql
         - name: PLATFORM_OPTS
           value: -Dlog4j.configurationFile=file:///var/lib/jetty/webapps/etc/log4j2.xml $(BLAZEGRAPH_ENDPOINT)
-        image: metaphacts/metaphactory:4.2.0
+        image: metaphacts/metaphactory:4.3.0
         name: metaphactory
         resources: {}
         volumeMounts:
         - mountPath: /runtime-data
           name: metaphactory-runtime-data
+        - mountPath: /apps
+          name: metaphactory-apps
+        - mountPath: /storage
+          name: metaphactory-storage
         ports:
         - containerPort: 8080
           protocol: TCP
       initContainers:
-      - image: metaphacts/metaphactory:4.2.0
+      - image: metaphacts/metaphactory:4.3.0
         name: metaphactory-config-init
         command: ["cp","-r","/runtime-data/.","/runtime-target/"]
         volumeMounts:
@@ -45,6 +49,22 @@ spec:
   volumeClaimTemplates:
   - metadata:
       name: metaphactory-runtime-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+ #     storageClassName: "my-storage-class"
+      resources:
+        requests:
+          storage: 100Mi
+  - metadata:
+      name: metaphactory-apps
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+ #     storageClassName: "my-storage-class"
+      resources:
+        requests:
+          storage: 100Mi
+  - metadata:
+      name: metaphactory-storage
     spec:
       accessModes: [ "ReadWriteOnce" ]
  #     storageClassName: "my-storage-class"
