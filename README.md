@@ -9,8 +9,8 @@
 
 **Prerequisites:**
 
-To perform any deployments or updates, you will first need to login to the metaphact's docker hub repositroy with your docker hub account, i.e. run `docker login`.
-Please request your account to be added via **support@metaphacts.com** if you have not yet done so.
+To perform any deployments or updates, you will first need to log into the metaphact's Docker hub repository. If you do not yet have access, please register for a trial on [https://metaphacts.com/get-started](https://metaphacts.com/get-started) and follow the steps to get started with a Docker-based deployment. 
+After registration you will receive an email containing a username and token to access the image from Docker Hub which can be used to log in using `docker login`.
 
 **IMPORTANT:** 
 It is also possible to use `stateful sets` for the deployment of metaphactory. An example configuration can be found in `/metaphactory/statefulset/`, which includes the pod and volume claim definitions in one file and allows easy update and scale-out configurations. Below guides will use the simple pod definition instead.
