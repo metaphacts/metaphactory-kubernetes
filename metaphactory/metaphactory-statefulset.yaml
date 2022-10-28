@@ -21,7 +21,7 @@ spec:
       containers:
       - env:
         - name: PLATFORM_OPTS
-          value: -Dlog4j.configurationFile=file:///var/lib/jetty/webapps/etc/log4j2.xml
+          value: -Dlog4j.configurationFile=file:///var/lib/jetty/webapps/etc/log4j2.xml -Dconfig.environment.securityConfigStorageId=config-app
         image: metaphacts/metaphactory:4.7.0
         name: metaphactory
         resources:
@@ -38,6 +38,9 @@ spec:
           name: metaphactory-apps
         - mountPath: /storage
           name: metaphactory-storage
+        - name: config-app
+          mountPath: "/apps/config-app"
+          readOnly: true
         ports:
         - containerPort: 8080
           protocol: TCP
@@ -50,6 +53,23 @@ spec:
           name: metaphactory-runtime-data
       imagePullSecrets:
       - name: regcred
+      volumes:
+      - name: config-app
+        configMap:
+          name: metaphactory-config
+          items:
+          - key: "environment.prop"
+            path: "config/environment.prop"
+          - key: "shiro-sso-oidc-params.ini"
+            path: "config/shiro-sso-oidc-params.ini"
+          - key: "shiro.ini"
+            path: "config/shiro.ini"
+          - key: "shiro-sso-users.ini"
+            path: "config/shiro-sso-users.ini"
+          - key: "plugin.properties"
+            path: "plugin.properties"
+          - key: "repository-config"
+            path: "config/repositories/default.ttl"
   volumeClaimTemplates:
   - metadata:
       name: metaphactory-runtime-data
@@ -75,3 +95,58 @@ spec:
       resources:
         requests:
           storage: 100Mi
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: metaphactory-config
+data:
+  environment.prop: |
+     shiroAuthenticationFilter=authcBasic,oidc
+     #enableLocalUsers=true
+  shiro-sso-oidc-params.ini: |
+     [main]
+     discoveryURI.value = https://login.microsoftonline.com/customer-tenant-id/v2.0/.well-known/openid-configuration
+     callbackUrl.value = https://metaphacts.example.com/sso/callback?client_name=OidcClient
+     clientId.value = customer-myclient
+     clientSecret.value = customer-myclient-secret
+     scope.value = openid email profile offline_access
+     principalNameAttribute.value = preferred_username
+     defaultRole.value = guest
+     rolesClaimAttribute.value = roles
+     scopeRolesMap.value = "admin":"admin,root,repository-admin","reader":"guest","writer":"admin"
+     defaultLogoutUrl.value = /logged-out/index.html
+  shiro.ini: |
+     [users]
+     admin=$shiro1$SHA-256$500000$JWFyxDbrkcdlGl6Xpj02dg==$UYbUG3bHmT8Z4dTeEHToK5WdyvwR9cRefiM/9zRjfr4=,admin,root,query-catalog,repository-admin
+     guest=$shiro1$SHA-256$500000$IbH5irWwZzyQlXHZg33GeA==$n+A1vGbmrIxJBBxGcsNn3cz48wDvhBkMbNPcskfAQy4=,guest
+     anonymous=$shiro1$SHA-256$500000$LRgzF+Iayekl6VfDVkVWIA==$/s38LlLsNeaGzsD0Z3VTvfurv68HpReieOaNlrcKaPI=,guest,tableau-anonymous
+  shiro-sso-users.ini: |
+     [users]
+     #myuser@example.com = admin,root,repository-admin
+  plugin.properties: |
+     plugin.id=config-app
+     plugin.provider=Devops
+     plugin.version=1.0.0
+  repository-config: |
+     # Configuration template for an Ontotext GraphDB repository
+     # accessed via the RDF4J REST API 
+     @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+     @prefix rep: <http://www.openrdf.org/config/repository#>.
+     @prefix hr: <http://www.openrdf.org/config/repository/http#>.
+     @prefix mph: <http://www.metaphacts.com/ontologies/platform/repository#>.
+     
+     [] a rep:Repository ;
+        rep:repositoryID "default" ; # Replace with your repository ID or leave default if this is the main repository
+        rdfs:label "GraphDB repository" ;
+        rep:repositoryImpl [
+           rep:repositoryType "metaphactory:GraphDBRepository" ;
+     
+           # Basic HTTP Auth credentials. You can comment these out if the repository does not require authentication.
+           # Username and password for the repository can be provided inline or using Externalized Secrets
+           mph:username "${repository.default.username:admin}" ;
+           mph:password "${repository.default.password:root}" ;  
+     
+           # replace with the url of the GraphDB repository
+           hr:repositoryURL <http://graphdb.example.com:7200/repositories/metaphactory>
+        ].
