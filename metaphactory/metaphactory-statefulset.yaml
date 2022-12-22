@@ -22,7 +22,7 @@ spec:
       - env:
         - name: PLATFORM_OPTS
           value: -Dlog4j.configurationFile=file:///var/lib/jetty/webapps/etc/log4j2.xml -Dconfig.environment.securityConfigStorageId=config-app
-        image: metaphacts/metaphactory:4.7.0
+        image: metaphacts/metaphactory:4.8.0
         name: metaphactory
         resources:
           requests:
@@ -45,7 +45,7 @@ spec:
         - containerPort: 8080
           protocol: TCP
       initContainers:
-      - image: metaphacts/metaphactory:4.7.0
+      - image: metaphacts/metaphactory:4.8.0
         name: metaphactory-config-init
         command: ["cp","-r","-n","/runtime-data/.","/runtime-target/"]
         volumeMounts:
