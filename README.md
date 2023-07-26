@@ -34,7 +34,7 @@ To create a new deployment from scratch follow these steps:
 7. Next start the metaphactory service with `kubectl apply -f ./metaphactory/metaphactory-service.yaml` (on Windows run `kubectl apply -f .\metaphactory\metaphactory-service.yaml`)
 8. Verify that the service for `metaphactory` is up and running with `kubectl get service metaphactory`. `metaphactory` service should show an external IP, please note down this IP or hostname
 9. Finally start the metaphactory pod and persistent volume claim with `kubectl apply -f ./metaphactory/metaphactory-statefulset.yaml` (on Windows run `kubectl apply -f .\metaphactory\metaphactory-statefulset.yaml`)
-10. Verify that the service is running by connecting to `http://<external IP>` with the external IP as retrieved during step 7.
+10. Verify that the service is running by connecting to `http://<external IP>` with the external IP as retrieved during step 8.
 11. Login with your SSO user. When local users are enabled (see `Configuration` below) user name and credentials can be provided in the login form available at the `/login` endpoint. The default credentials are user `admin` with password `admin`.
 
 

@@ -22,7 +22,7 @@ spec:
       - env:
         - name: PLATFORM_OPTS
           value: -Dlog4j.configurationFile=file:///var/lib/jetty/webapps/etc/log4j2.xml -Dconfig.environment.securityConfigStorageId=config-app
-        image: metaphacts/metaphactory:4.8.0
+        image: metaphacts/metaphactory:5.0.0
         name: metaphactory
         resources:
           requests:
@@ -45,7 +45,7 @@ spec:
         - containerPort: 8080
           protocol: TCP
       initContainers:
-      - image: metaphacts/metaphactory:4.8.0
+      - image: metaphacts/metaphactory:5.0.0
         name: metaphactory-config-init
         command: ["cp","-r","-n","/runtime-data/.","/runtime-target/"]
         volumeMounts:
@@ -114,16 +114,15 @@ data:
      principalNameAttribute.value = preferred_username
      defaultRole.value = guest
      rolesClaimAttribute.value = roles
-     scopeRolesMap.value = "admin":"admin,root,repository-admin","reader":"guest","writer":"admin"
+     scopeRolesMap.value = "admin":"admin,root","reader":"end-user","writer":"knowledge-graph-engineer"
      defaultLogoutUrl.value = /logged-out/index.html
   shiro.ini: |
      [users]
-     admin=$shiro1$SHA-256$500000$JWFyxDbrkcdlGl6Xpj02dg==$UYbUG3bHmT8Z4dTeEHToK5WdyvwR9cRefiM/9zRjfr4=,admin,root,query-catalog,repository-admin
-     guest=$shiro1$SHA-256$500000$IbH5irWwZzyQlXHZg33GeA==$n+A1vGbmrIxJBBxGcsNn3cz48wDvhBkMbNPcskfAQy4=,guest
-     anonymous=$shiro1$SHA-256$500000$LRgzF+Iayekl6VfDVkVWIA==$/s38LlLsNeaGzsD0Z3VTvfurv68HpReieOaNlrcKaPI=,guest,tableau-anonymous
+     admin=$shiro1$SHA-256$500000$JWFyxDbrkcdlGl6Xpj02dg==$UYbUG3bHmT8Z4dTeEHToK5WdyvwR9cRefiM/9zRjfr4=,admin,root
+     anonymous=$shiro1$SHA-256$500000$LRgzF+Iayekl6VfDVkVWIA==$/s38LlLsNeaGzsD0Z3VTvfurv68HpReieOaNlrcKaPI=,end-user,tableau-anonymous
   shiro-sso-users.ini: |
      [users]
-     #myuser@example.com = admin,root,repository-admin
+     #myuser@example.com = admin,root
   plugin.properties: |
      plugin.id=config-app
      plugin.provider=Devops
